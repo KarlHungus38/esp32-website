@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     getLocationAndUpdateWeather();
-    updateTrainSchedule();
 });
 
 async function getLocationAndUpdateWeather() {
@@ -10,6 +9,7 @@ async function getLocationAndUpdateWeather() {
             const longitude = position.coords.longitude;
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             updateWeather(latitude, longitude, timezone);
+            console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Timezone: ${timezone}`);
         }, (error) => {
             console.error('Error getting location:', error);
             // Fallback to Berlin's coordinates and timezone if location is not available
@@ -31,8 +31,6 @@ async function updateWeather(latitude, longitude, timezone) {
         start: new Date().toISOString().split('T')[0], // current date in ISO format
         timezone
     };
-
-    console.log(params);
 
     const url = `${apiEndpoint}?latitude=${params.latitude}&longitude=${params.longitude}&hourly=${params.hourly}&start=${params.start}&timezone=${params.timezone}`;
     try {
@@ -167,22 +165,4 @@ function createWeatherElements(weatherData) {
     });
 }
 
-function updateTrainSchedule() {
-    // This function should call a train schedule API and update the DOM
-    // Example:
-    // fetch('your-train-schedule-api-url')
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         const schedule = data.trains.map(train => `<li>${train.name}: ${train.time}</li>`).join('');
-    //         document.getElementById('train-schedule').innerHTML = schedule;
-    //     });
 
-    // Sample data for demonstration
-    const schedule = `
-        <li>Train 1: 10:30</li>
-        <li>Train 2: 10:45</li>
-        <li>Train 3: 11:00</li>
-        <li>Train 4: 11:15</li>
-    `;
-    document.getElementById('train-schedule').innerHTML = schedule;
-}
