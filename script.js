@@ -27,7 +27,6 @@ async function updateWeather() {
 }
 
 function processWeatherData(hourlyData) {
-    console.log(hourlyData);
     const weatherIcons = {
         0: 'wi-day-sunny', // Clear sky
         1: 'wi-day-sunny', // Mainly clear
@@ -59,9 +58,7 @@ function processWeatherData(hourlyData) {
         99: 'wi-thunderstorm', // Thunderstorm with heavy hail
     };
 
-
-    const starting_hour = parseInt(new Date().toISOString().split('T')[1].split(':')[0]) + 2
-    
+    const starting_hour = parseInt( new Date().toLocaleString('en-US', { timeZone: 'Europe/Berlin', hour: 'numeric', hour12: false }) )
 
     const hoursToShow = [starting_hour, starting_hour+1, starting_hour+2, starting_hour+3, starting_hour+5, starting_hour+8]; // Indices of the hours to show
     const weatherData = hoursToShow.map(index => ({
