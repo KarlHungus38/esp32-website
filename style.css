@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f5;
+    color: #333;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.weather, .trains {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: white;
+    border-radius: 8px;
+}
+
+.weather-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.weather-forecast {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.weather-hour {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background-color: #f9f9fb;
+}
+
+.weather-hour img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.weather-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.weather-details .temperature {
+    font-size: 20px;
+    margin: 5px 0;
+}
+
+.weather-details .time {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.weather-details .description {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.trains h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#train-schedule {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+#train-schedule li {
+    margin: 10px 0;
+    font-size: 18px;
+}
