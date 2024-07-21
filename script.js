@@ -1,32 +1,51 @@
 document.addEventListener("DOMContentLoaded", () => {
-    updateWeather();
+    getLocationAndUpdateWeather();
     updateTrainSchedule();
 });
 
-async function updateWeather() {
-    // Define the API endpoint and parameters
+async function getLocationAndUpdateWeather() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            updateWeather(latitude, longitude, timezone);
+        }, (error) => {
+            console.error('Error getting location:', error);
+            // Fallback to Berlin's coordinates and timezone if location is not available
+            updateWeather(52.437, 13.721, 'Europe/Berlin');
+        });
+    } else {
+        console.error('Geolocation is not supported by this browser.');
+        // Fallback to Berlin's coordinates and timezone if geolocation is not supported
+        updateWeather(52.437, 13.721, 'Europe/Berlin');
+    }
+}
+
+async function updateWeather(latitude, longitude, timezone) {
     const apiEndpoint = 'https://api.open-meteo.com/v1/forecast';
     const params = {
-        latitude: 52.437, // Berlin's latitude 
-        longitude: 13.721, // Berlin's longitude
+        latitude,
+        longitude,
         hourly: 'temperature_2m,weathercode',
         start: new Date().toISOString().split('T')[0], // current date in ISO format
-        timezone: 'Europe/Berlin'
+        timezone
     };
 
-    // Construct the full URL
+    console.log(params);
+
     const url = `${apiEndpoint}?latitude=${params.latitude}&longitude=${params.longitude}&hourly=${params.hourly}&start=${params.start}&timezone=${params.timezone}`;
     try {
         const response = await fetch(url);
         const data = await response.json();
-        const weatherData = processWeatherData(data.hourly);
+        const weatherData = processWeatherData(data.hourly, params.timezone);
         createWeatherElements(weatherData);
     } catch (error) {
         console.error('Error fetching weather data:', error);
     }
 }
 
-function processWeatherData(hourlyData) {
+function processWeatherData(hourlyData, this_timezone) {
     const weatherIcons = {
         0: 'wi-day-sunny', // Clear sky
         1: 'wi-day-sunny', // Mainly clear
@@ -58,9 +77,10 @@ function processWeatherData(hourlyData) {
         99: 'wi-thunderstorm', // Thunderstorm with heavy hail
     };
 
-    const starting_hour = parseInt( new Date().toLocaleString('en-US', { timeZone: 'Europe/Berlin', hour: 'numeric', hour12: false }) )
 
-    const hoursToShow = [starting_hour, starting_hour+1, starting_hour+2, starting_hour+3, starting_hour+5, starting_hour+8]; // Indices of the hours to show
+    const starting_hour = parseInt(new Date().toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false }));
+
+    const hoursToShow = [starting_hour, starting_hour + 1, starting_hour + 2, starting_hour + 3, starting_hour + 5, starting_hour + 8]; // Indices of the hours to show
     const weatherData = hoursToShow.map(index => ({
         temp: `${hourlyData.temperature_2m[index]}°C`,
         icon: weatherIcons[hourlyData.weathercode[index]] || 'wi-day-sunny',
