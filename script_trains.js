@@ -47,9 +47,7 @@ async function findNearbyStation(latitude, longitude) {
         const data = await fetchWithRetry(url);
         if (data.length > 0 && data[0].id) {
             const stationId = data[0].id;
-            const stationName = data[0].name.split("(")[0];
-            console.log(`Nearby station: ${stationName} (${stationId})`);
-
+            const stationName = data[0].name;
             document.querySelector('.trains h1').textContent = stationName;
             updateTrainSchedule(stationId);
         } else {
@@ -67,22 +65,34 @@ async function updateTrainSchedule(stationId) {
 
     try {
         const data = await fetchWithRetry(url);
-        const scheduleElement = document.getElementById('train-schedule');
-        scheduleElement.innerHTML = '';  // Clear existing schedule
+        const timelineElement = document.getElementById('timeline');
+        timelineElement.innerHTML = '';  // Clear existing timeline
 
         if (data.departures && data.departures.length > 0) {
+            const now = new Date();
             data.departures.forEach(departure => {
                 const actualTime = new Date(departure.when);
                 const plannedTime = new Date(departure.plannedWhen);
-                const delay = Math.round((actualTime - plannedTime) / 6000) / 10; // delay in minutes, rounded to 1 decimal place
-                const station_name = departure.direction.split("(")[0];
-                
-                const listItem = document.createElement('li');
-                listItem.textContent = `${departure.line.name} ${station_name}: ${actualTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} (Delay: ${delay} min)`;
-                scheduleElement.appendChild(listItem);
+                const delay = (actualTime - plannedTime) / 60000; // delay in minutes
+
+                const minutesFromNow = (actualTime - now) / 60000; // minutes from now
+                const leftPosition = (minutesFromNow / 30) * 100; // percentage position in the 30 min timeline
+
+                const trainElement = document.createElement('div');
+                trainElement.className = `train ${getLineClass(departure.line.name)}`;
+                trainElement.style.left = `calc(${leftPosition}% - 10px)`;
+
+                trainElement.innerHTML = `
+                    <div class="${delay > 0 ? 'delay-line' : 'no-delay-line'}" style="height: ${Math.abs(delay * 3)}px; top: ${delay > 0 ? '-10px' : '0'};"></div>
+                    <span>${departure.line.name} to ${departure.direction} at ${actualTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ${delay > 0 ? `(Delay: ${delay} min)` : ''}</span>
+                `;
+
+                timelineElement.appendChild(trainElement);
             });
+
+            adjustGreenTrainElements();
         } else {
-            scheduleElement.innerHTML = '<li>No upcoming trains found</li>';
+            timelineElement.innerHTML = '<div>No upcoming trains found</div>';
         }
     } catch (error) {
         console.error('Error fetching train data:', error);
@@ -90,7 +100,33 @@ async function updateTrainSchedule(stationId) {
     }
 }
 
+function getLineClass(lineName) {
+    if (lineName.startsWith('S')) {
+        return 's-line';
+    } else if (!isNaN(lineName)) {
+        return 'number-line';
+    } else {
+        return 'other-line';
+    }
+}
+
+function adjustGreenTrainElements() {
+    const greenElements = document.querySelectorAll('.s-line');
+    const positions = new Set();
+
+    greenElements.forEach(element => {
+        let topPosition = 0;
+
+        while (positions.has(topPosition)) {
+            topPosition += 20; // Adjust this value to provide more/less spacing
+        }
+
+        element.style.bottom = `${80 + topPosition}px`;
+        positions.add(topPosition);
+    });
+}
+
 function updateTrainScheduleWithError(message) {
-    const scheduleElement = document.getElementById('train-schedule');
-    scheduleElement.innerHTML = `<li>${message}</li>`;
+    const timelineElement = document.getElementById('timeline');
+    timelineElement.innerHTML = `<div>${message}</div>`;
 }

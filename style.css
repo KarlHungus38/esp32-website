@@ -91,3 +91,65 @@ body {
     margin: 10px 0;
     font-size: 18px;
 }
+
+.trains {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: white;
+    border-radius: 8px;
+}
+
+.trains h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#timeline {
+    position: relative;
+    width: 100%;
+    height: 200px; /* Increase height to provide more vertical space */
+    border-top: 2px solid #333;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.train {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.train span {
+    white-space: nowrap;
+}
+
+.s-line {
+    color: darkgreen;
+    bottom: 80px;
+}
+
+.number-line {
+    color: purple;
+    top: 40px;
+}
+
+.other-line {
+    color: red;
+    top: 80px;
+}
+
+.delay-line {
+    position: absolute;
+    width: 2px;
+    background-color: red;
+}
+
+.no-delay-line {
+    position: absolute;
+    width: 2px;
+    background-color: lightgray;
+}
