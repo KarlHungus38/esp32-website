@@ -16,7 +16,6 @@ async function updateWeather() {
 
     // Construct the full URL
     const url = `${apiEndpoint}?latitude=${params.latitude}&longitude=${params.longitude}&hourly=${params.hourly}&start=${params.start}&timezone=${params.timezone}`;
-
     try {
         const response = await fetch(url);
         const data = await response.json();
@@ -28,6 +27,7 @@ async function updateWeather() {
 }
 
 function processWeatherData(hourlyData) {
+    console.log(hourlyData);
     const weatherIcons = {
         0: 'wi-day-sunny', // Clear sky
         1: 'wi-day-sunny', // Mainly clear
@@ -59,7 +59,11 @@ function processWeatherData(hourlyData) {
         99: 'wi-thunderstorm', // Thunderstorm with heavy hail
     };
 
-    const hoursToShow = [0, 1, 2, 3, 22, 24]; // Indices of the hours to show
+
+    const starting_hour = parseInt(new Date().toISOString().split('T')[1].split(':')[0]) + 2
+    
+
+    const hoursToShow = [starting_hour, starting_hour+1, starting_hour+2, starting_hour+3, starting_hour+5, starting_hour+8]; // Indices of the hours to show
     const weatherData = hoursToShow.map(index => ({
         temp: `${hourlyData.temperature_2m[index]}°C`,
         icon: weatherIcons[hourlyData.weathercode[index]] || 'wi-day-sunny',
@@ -106,8 +110,9 @@ function getDescription(weatherCode) {
 }
 
 function formatTime(hourIndex) {
+    const hour = hourIndex % 24;
     const times = ['Now', '+1 Hour', '+2 Hours', '+3 Hours', '22:00', 'Midnight'];
-    return times[hourIndex] || `${hourIndex}:00`;
+    return `${hour}:00`;
 }
 
 function createWeatherElements(weatherData) {
