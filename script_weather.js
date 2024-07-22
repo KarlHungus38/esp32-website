@@ -54,7 +54,7 @@ async function updateWeather(latitude, longitude, timezone, sunrise, sunset) {
 }
 
 function processWeatherData(hourlyData, this_timezone, sunrise, sunset) {
-    console.log(hourlyData)
+    // console.log(hourlyData)
     const weatherIcons = {
         0: 'wi-day-sunny', // Clear sky
         1: 'wi-day-sunny', // Mainly clear

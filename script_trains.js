@@ -40,8 +40,9 @@ async function findNearbyStation(latitude, longitude) {
         if (data.length > 0 && data[0].id) {
             const stationId = data[0].id;
             const stationName = data[0].name;
-            document.querySelector('.trains h1').textContent = stationName;
-            updateTrainSchedule(stationId);
+            // document.querySelector('.trains h3').textContent = stationName;
+            // document.querySelector('.trains h3').textContent = "line 44 stations name is old code";
+            updateTrainSchedule(stationId, stationName);
         } else {
             console.error('No nearby station found.');
             updateTrainScheduleWithError('No nearby station found');
@@ -52,43 +53,58 @@ async function findNearbyStation(latitude, longitude) {
     }
 }
 
-async function updateTrainSchedule(stationId) {
+async function updateTrainSchedule(stationId, stationname) {
     const url = `https://v6.bvg.transport.rest/stops/${stationId}/departures?duration=30`;
 
     try {
-        const data = await fetchWithRetry(url);
-        const timelineElement = document.getElementById('timeline');
-        timelineElement.innerHTML = '';  // Clear existing timeline
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        const trainsElement = document.querySelector('.trains');
+        trainsElement.innerHTML = ''; // Clear existing timeline
+        
+        const train_board = document.createElement('div'); 
+        train_board.id = 'train-board';
+        trainsElement.appendChild(train_board);
 
         if (data.departures && data.departures.length > 0) {
-            const now = new Date();
+            const train_h3 = document.createElement('h3'); 
+            train_h3.textContent = stationname.split("(")[0];
+            trainsElement.insertBefore(train_h3, train_board);
+
             data.departures.forEach(departure => {
                 const actualTime = new Date(departure.when);
                 const plannedTime = new Date(departure.plannedWhen);
                 const delay = (actualTime - plannedTime) / 60000; // delay in minutes
+                const formattedTime = actualTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                const minutesFromNow = (actualTime - now) / 60000; // minutes from now
-                const leftPosition = (minutesFromNow / 30) * 100; // percentage position in the 30 min timeline
+                const train_entry = document.createElement('div');
+                train_entry.className = 'train-entry';
 
-                const trainElement = document.createElement('div');
-                trainElement.className = `train ${getLineClass(departure.line.name)}`;
-                trainElement.style.left = `calc(${leftPosition}% - 10px)`;
+                const train_time = document.createElement('span');
+                train_time.className = 'train-time';
+                train_time.textContent = formattedTime;
 
-                trainElement.innerHTML = `
-                    <div class="${delay > 0 ? 'delay-line' : 'no-delay-line'}" style="height: ${Math.abs(delay * 3)}px; top: ${delay > 0 ? '-10px' : '0'};"></div>
-                    <span>${departure.line.name} to ${departure.direction} at ${actualTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ${delay > 0 ? `(Delay: ${delay} min)` : ''}</span>
-                `;
+                const train_destination = document.createElement('span');
+                train_destination.className = 'train-destination';
+                train_destination.textContent = `${departure.line.name} to ${departure.destination.name.split("(")[0]}`;
 
-                timelineElement.appendChild(trainElement);
+                const train_status = document.createElement('span');
+                train_status.className = 'train-status';
+                train_status.textContent = delay > 0 ? `${delay} min delay` : 'On time';
+
+                train_entry.appendChild(train_time);
+                train_entry.appendChild(train_destination);
+                train_entry.appendChild(train_status);
+                train_board.appendChild(train_entry);
             });
 
-            adjustGreenTrainElements();
         } else {
-            timelineElement.innerHTML = '<div>No upcoming trains found</div>';
+            trainsElement.innerHTML = '<div>No upcoming trains found</div>';
         }
     } catch (error) {
         console.error('Error fetching train data:', error);
-        updateTrainScheduleWithError('Error fetching train data');
+        trainsElement.innerHTML = '<div>Error fetching train data</div>';
     }
 }
 
@@ -118,7 +134,8 @@ function adjustGreenTrainElements() {
     });
 }
 
+
 function updateTrainScheduleWithError(message) {
-    const timelineElement = document.getElementById('timeline');
+    const timelineElement = document.getElementById('train-board');
     timelineElement.innerHTML = `<div>${message}</div>`;
 }

@@ -153,3 +153,39 @@ body {
     width: 2px;
     background-color: lightgray;
 }
+
+
+
+#train-board {
+    background-color: #003580; /* Deutsche Bahn blue */
+    color: white;
+    font-family: 'Courier New', Courier, monospace; /* Pixel-like font */
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.train-entry {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.train-time, .train-destination, .train-status {
+    flex: 1;
+    text-align: center;
+}
+
+.train-status {
+    color: yellow; /* Status in yellow */
+}
+
+.train-entry:last-child {
+    border-bottom: none; /* Remove border for last entry */
+}
+
+.station-name {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: right;
+}
