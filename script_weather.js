@@ -1,29 +1,21 @@
-document.addEventListener("DOMContentLoaded", () => {
-    getLocationAndUpdateWeather();
-});
+import { getCurrentLocation } from './execute_scripts.js';
 
-async function getLocationAndUpdateWeather() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+document.addEventListener("DOMContentLoaded", () => {
+    getCurrentLocation(
+        async (latitude, longitude) => {
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const { sunrise, sunset } = await getSunriseSunsetTimes(latitude, longitude);
             updateWeather(latitude, longitude, timezone, sunrise, sunset);
             console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Timezone: ${timezone}`);
-        }, async (error) => {
+        },
+        async (error) => {
             console.error('Error getting location:', error);
             // Fallback to Berlin's coordinates and timezone if location is not available
             const fallbackSunTimes = await getSunriseSunsetTimes(52.437, 13.721);
             updateWeather(52.437, 13.721, 'Europe/Berlin', fallbackSunTimes.sunrise, fallbackSunTimes.sunset);
-        });
-    } else {
-        console.error('Geolocation is not supported by this browser.');
-        // Fallback to Berlin's coordinates and timezone if geolocation is not supported
-        const fallbackSunTimes = await getSunriseSunsetTimes(52.437, 13.721);
-        updateWeather(52.437, 13.721, 'Europe/Berlin', fallbackSunTimes.sunrise, fallbackSunTimes.sunset);
-    }
-}
+        }
+    );
+});
 
 async function getSunriseSunsetTimes(latitude, longitude) {
     const apiEndpoint = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`;
@@ -62,6 +54,7 @@ async function updateWeather(latitude, longitude, timezone, sunrise, sunset) {
 }
 
 function processWeatherData(hourlyData, this_timezone, sunrise, sunset) {
+    console.log(hourlyData)
     const weatherIcons = {
         0: 'wi-day-sunny', // Clear sky
         1: 'wi-day-sunny', // Mainly clear

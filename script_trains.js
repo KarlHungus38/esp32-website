@@ -1,24 +1,16 @@
+import { getCurrentLocation } from './execute_scripts.js';
+
 document.addEventListener("DOMContentLoaded", () => {
-    getCurrentLocation();
-});
-
-function getCurrentLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            findNearbyStation(52.438, 13.721);
-
-            // findNearbyStation(latitude, longitude);
-        }, error => {
+    getCurrentLocation(
+        (latitude, longitude) => {
+            findNearbyStation(latitude, longitude); // Or use findNearbyStation(latitude, longitude); once implemented
+        },
+        (error) => {
             console.error('Error getting location:', error);
             updateTrainScheduleWithError('Error getting location');
-        });
-    } else {
-        console.error('Geolocation is not supported by this browser.');
-        updateTrainScheduleWithError('Geolocation is not supported by this browser.');
-    }
-}
+        }
+    );
+});
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
