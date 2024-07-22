@@ -8,21 +8,39 @@ async function getLocationAndUpdateWeather() {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            updateWeather(latitude, longitude, timezone);
+            const { sunrise, sunset } = await getSunriseSunsetTimes(latitude, longitude);
+            updateWeather(latitude, longitude, timezone, sunrise, sunset);
             console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Timezone: ${timezone}`);
-        }, (error) => {
+        }, async (error) => {
             console.error('Error getting location:', error);
             // Fallback to Berlin's coordinates and timezone if location is not available
-            updateWeather(52.437, 13.721, 'Europe/Berlin');
+            const fallbackSunTimes = await getSunriseSunsetTimes(52.437, 13.721);
+            updateWeather(52.437, 13.721, 'Europe/Berlin', fallbackSunTimes.sunrise, fallbackSunTimes.sunset);
         });
     } else {
         console.error('Geolocation is not supported by this browser.');
         // Fallback to Berlin's coordinates and timezone if geolocation is not supported
-        updateWeather(52.437, 13.721, 'Europe/Berlin');
+        const fallbackSunTimes = await getSunriseSunsetTimes(52.437, 13.721);
+        updateWeather(52.437, 13.721, 'Europe/Berlin', fallbackSunTimes.sunrise, fallbackSunTimes.sunset);
     }
 }
 
-async function updateWeather(latitude, longitude, timezone) {
+async function getSunriseSunsetTimes(latitude, longitude) {
+    const apiEndpoint = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`;
+    try {
+        const response = await fetch(apiEndpoint);
+        const data = await response.json();
+        return {
+            sunrise: new Date(data.results.sunrise),
+            sunset: new Date(data.results.sunset)
+        };
+    } catch (error) {
+        console.error('Error fetching sunrise and sunset times:', error);
+        return { sunrise: null, sunset: null };
+    }
+}
+
+async function updateWeather(latitude, longitude, timezone, sunrise, sunset) {
     const apiEndpoint = 'https://api.open-meteo.com/v1/forecast';
     const params = {
         latitude,
@@ -36,14 +54,14 @@ async function updateWeather(latitude, longitude, timezone) {
     try {
         const response = await fetch(url);
         const data = await response.json();
-        const weatherData = processWeatherData(data.hourly, params.timezone);
+        const weatherData = processWeatherData(data.hourly, params.timezone, sunrise, sunset);
         createWeatherElements(weatherData);
     } catch (error) {
         console.error('Error fetching weather data:', error);
     }
 }
 
-function processWeatherData(hourlyData, this_timezone) {
+function processWeatherData(hourlyData, this_timezone, sunrise, sunset) {
     const weatherIcons = {
         0: 'wi-day-sunny', // Clear sky
         1: 'wi-day-sunny', // Mainly clear
@@ -75,16 +93,32 @@ function processWeatherData(hourlyData, this_timezone) {
         99: 'wi-thunderstorm', // Thunderstorm with heavy hail
     };
 
-
     const starting_hour = parseInt(new Date().toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false }));
 
     const hoursToShow = [starting_hour, starting_hour + 1, starting_hour + 2, starting_hour + 3, starting_hour + 5, starting_hour + 8]; // Indices of the hours to show
-    const weatherData = hoursToShow.map(index => ({
-        temp: `${hourlyData.temperature_2m[index]}°C`,
-        icon: weatherIcons[hourlyData.weathercode[index]] || 'wi-day-sunny',
-        description: getDescription(hourlyData.weathercode[index]),
-        time: formatTime(index)
-    }));
+    const weatherData = hoursToShow.map(index => {
+        const sunrise_here = sunrise.toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false })
+        const sunset_here = sunset.toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false })
+
+        const isDayTime = index >= sunrise_here && index < sunset_here;
+        let icon = weatherIcons[hourlyData.weathercode[index]] || 'wi-day-sunny';
+        if (!isDayTime) {
+            if (hourlyData.weathercode[index] === 0 || hourlyData.weathercode[index] === 1) {
+                icon = 'wi-night-clear'; // Clear sky at night
+            } else if (hourlyData.weathercode[index] === 2) {
+                icon = 'wi-night-alt-partly-cloudy'; // Partly cloudy at night
+            } else {
+                icon = icon.replace('day', 'night');
+            }
+        }
+        return {
+            temp: `${hourlyData.temperature_2m[index]}°C`,
+            icon: icon,
+            description: getDescription(hourlyData.weathercode[index]),
+            time: formatTime(index),
+            isDayTime: isDayTime
+        };
+    });
 
     return weatherData;
 }
@@ -137,6 +171,11 @@ function createWeatherElements(weatherData) {
         const weatherHour = document.createElement('div');
         weatherHour.classList.add('weather-hour');
         weatherHour.id = `hour${index + 1}`;
+        if (data.isDayTime) {
+            weatherHour.classList.add('weatherday');
+        } else {
+            weatherHour.classList.add('weathernight');
+        }
 
         const weatherIcon = document.createElement('i');
         weatherIcon.classList.add('weather-icon', 'wi', data.icon);
@@ -164,5 +203,3 @@ function createWeatherElements(weatherData) {
         weatherForecast.appendChild(weatherHour);
     });
 }
-
-
