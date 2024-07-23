@@ -15,7 +15,7 @@ body {
     justify-content: center;
 }
 
-.weather, .trains {
+.weather {
     width: 100%;
     max-width: 800px;
     padding: 20px;
@@ -154,38 +154,66 @@ body {
     background-color: lightgray;
 }
 
-
-
-#train-board {
-    background-color: #003580; /* Deutsche Bahn blue */
-    color: white;
-    font-family: 'Courier New', Courier, monospace; /* Pixel-like font */
+.trains {
+    width: 100%;
+    max-width: 800px;
     padding: 20px;
+    margin: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: white;
     border-radius: 8px;
-}
-
-.train-entry {
     display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #ccc;
-}
-
-.train-time, .train-destination, .train-status {
-    flex: 1;
-    text-align: center;
-}
-
-.train-status {
-    color: yellow; /* Status in yellow */
-}
-
-.train-entry:last-child {
-    border-bottom: none; /* Remove border for last entry */
 }
 
 .station-name {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     text-align: right;
+    padding-right: 20px;
+    margin-right: 20px;
+    /* border-right: 1px solid #ccc; */
+}
+
+#s-trains-section, #buses-section {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+#s-trains-section {
+    background-color: #003580; /* Deutsche Bahn blue */
+    color: white;
+    font-family: 'Courier New', Courier, monospace; /* Pixel-like font */
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+#buses-section {
+    background-color: black; /* Orange color for buses */
+    color: #FFA500;
+    font-family: 'Courier New', Courier, monospace; /* Pixel-like font */
+    border-radius: 8px;
+}
+
+.train-entry, .bus-entry {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.train-time, .train-destination, .train-status, .bus-time, .bus-destination, .bus-status {
+    flex: 1;
+    text-align: center;
+}
+
+.train-status {
+    color: white; /* Status in yellow */
+} 
+
+.bus-status {
+    color: #FFA500; /* Status in yellow */
+}
+
+.train-entry:last-child, .bus-entry:last-child {
+    border-bottom: none; /* Remove border for last entry */
 }

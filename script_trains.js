@@ -62,41 +62,50 @@ async function updateTrainSchedule(stationId, stationname) {
         
         const trainsElement = document.querySelector('.trains');
         trainsElement.innerHTML = ''; // Clear existing timeline
-        
-        const train_board = document.createElement('div'); 
-        train_board.id = 'train-board';
-        trainsElement.appendChild(train_board);
+
+        // Create sections
+        const stationNameSection = document.createElement('div');
+        stationNameSection.className = 'station-name';
+        stationNameSection.textContent = stationname.split("(")[0];
+        trainsElement.appendChild(stationNameSection);
+
+        const sTrainsSection = document.createElement('div');
+        sTrainsSection.id = 's-trains-section';
+        trainsElement.appendChild(sTrainsSection);
+
+        const busesSection = document.createElement('div');
+        busesSection.id = 'buses-section';
+        trainsElement.appendChild(busesSection);
 
         if (data.departures && data.departures.length > 0) {
-            const train_h3 = document.createElement('h3'); 
-            train_h3.textContent = stationname.split("(")[0];
-            trainsElement.insertBefore(train_h3, train_board);
-
             data.departures.forEach(departure => {
                 const actualTime = new Date(departure.when);
                 const plannedTime = new Date(departure.plannedWhen);
                 const delay = (actualTime - plannedTime) / 60000; // delay in minutes
                 const formattedTime = actualTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                const train_entry = document.createElement('div');
-                train_entry.className = 'train-entry';
+                const isSTrain = departure.line.name.startsWith('S');
+                const entrySection = isSTrain ? sTrainsSection : busesSection;
 
-                const train_time = document.createElement('span');
-                train_time.className = 'train-time';
-                train_time.textContent = formattedTime;
+                const entry = document.createElement('div');
+                entry.className = isSTrain ? 'train-entry' : 'bus-entry';
 
-                const train_destination = document.createElement('span');
-                train_destination.className = 'train-destination';
-                train_destination.textContent = `${departure.line.name} to ${departure.destination.name.split("(")[0]}`;
+                const timeSpan = document.createElement('span');
+                timeSpan.className = isSTrain ? 'train-time' : 'bus-time';
+                timeSpan.textContent = formattedTime;
 
-                const train_status = document.createElement('span');
-                train_status.className = 'train-status';
-                train_status.textContent = delay > 0 ? `${delay} min delay` : 'On time';
+                const destinationSpan = document.createElement('span');
+                destinationSpan.className = isSTrain ? 'train-destination' : 'bus-destination';
+                destinationSpan.textContent = `${departure.line.name} to ${departure.destination.name.split("(")[0]}`;
 
-                train_entry.appendChild(train_time);
-                train_entry.appendChild(train_destination);
-                train_entry.appendChild(train_status);
-                train_board.appendChild(train_entry);
+                const statusSpan = document.createElement('span');
+                statusSpan.className = isSTrain ? 'train-status' : 'bus-status';
+                statusSpan.textContent = delay > 0 ? `${delay} min delay` : 'On time';
+
+                entry.appendChild(timeSpan);
+                entry.appendChild(destinationSpan);
+                entry.appendChild(statusSpan);
+                entrySection.appendChild(entry);
             });
 
         } else {
@@ -107,6 +116,7 @@ async function updateTrainSchedule(stationId, stationname) {
         trainsElement.innerHTML = '<div>Error fetching train data</div>';
     }
 }
+
 
 function getLineClass(lineName) {
     if (lineName.startsWith('S')) {
