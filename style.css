@@ -194,11 +194,18 @@ body {
     border-radius: 8px;
 }
 
-.train-entry, .bus-entry {
+.train-entry {
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
     border-bottom: 1px solid #ccc;
+}
+
+.bus-entry {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #FFA500;
 }
 
 .train-time, .train-destination, .train-status, .bus-time, .bus-destination, .bus-status {
