@@ -85,7 +85,8 @@ function processWeatherData(hourlyData, this_timezone, sunrise, sunset) {
         99: 'wi-thunderstorm', // Thunderstorm with heavy hail
     };
 
-    const starting_hour = parseInt(new Date().toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false }));
+    const starting_hour = parseInt(new Date().toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false })) - 6;
+    console.log("i changed starting hour in line 88 to see more daytime")
 
     const hoursToShow = [starting_hour, starting_hour + 1, starting_hour + 2, starting_hour + 3, starting_hour + 5, starting_hour + 8]; // Indices of the hours to show
     const weatherData = hoursToShow.map(index => {
@@ -108,7 +109,7 @@ function processWeatherData(hourlyData, this_timezone, sunrise, sunset) {
             icon: icon,
             description: getDescription(hourlyData.weathercode[index]),
             time: formatTime(index),
-            isDayTime: isDayTime
+            isDayTime: isDayTime, 
         };
     });
 
@@ -152,17 +153,19 @@ function getDescription(weatherCode) {
 
 function formatTime(hourIndex) {
     const hour = hourIndex % 24;
-    const times = ['Now', '+1 Hour', '+2 Hours', '+3 Hours', '22:00', 'Midnight'];
     return `${hour}:00`;
 }
 
 function createWeatherElements(weatherData) {
     const weatherForecast = document.getElementById('weather-forecast');
 
-    weatherData.forEach((data, index) => {
+    weatherData.forEach((data) => {
         const weatherHour = document.createElement('div');
         weatherHour.classList.add('weather-hour');
-        weatherHour.id = `hour${index + 1}`;
+        // weatherHour.Id = data.icon; 
+        const parts = data.icon.split("-");
+        const id = parts.slice(1).join("-");
+        weatherHour.id = id; 
         if (data.isDayTime) {
             weatherHour.classList.add('weatherday');
         } else {
