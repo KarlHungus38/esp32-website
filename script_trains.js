@@ -2,8 +2,8 @@ import { getCurrentLocation } from './execute_scripts.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     getCurrentLocation(
-        (latitude, longitude) => {
-            findNearbyStation(latitude, longitude); // Or use findNearbyStation(latitude, longitude); once implemented
+        (latitude, longitude, stationid, stationName) => {
+            updateTrainSchedule(stationid, stationName); // Or use findNearbyStation(latitude, longitude); once implemented
         },
         (error) => {
             console.error('Error getting location:', error);
@@ -11,47 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 });
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function fetchWithRetry(url, options = {}, retries = 3, delay = 2000) {
-    for (let i = 0; i < retries; i++) {
-        try {
-            const response = await fetch(url, options);
-            if (!response.ok) throw new Error('Network response was not ok');
-            return await response.json();
-        } catch (error) {
-            if (i < retries - 1) {
-                await sleep(delay);
-            } else {
-                throw error;
-            }
-        }
-    }
-}
-
-async function findNearbyStation(latitude, longitude) {
-    const url = `https://v6.bvg.transport.rest/locations/nearby?results=1&latitude=${latitude}&longitude=${longitude}`;
-
-    try {
-        const data = await fetchWithRetry(url);
-        if (data.length > 0 && data[0].id) {
-            const stationId = data[0].id;
-            const stationName = data[0].name;
-            // document.querySelector('.trains h3').textContent = stationName;
-            // document.querySelector('.trains h3').textContent = "line 44 stations name is old code";
-            updateTrainSchedule(stationId, stationName);
-        } else {
-            console.error('No nearby station found.');
-            updateTrainScheduleWithError('No nearby station found');
-        }
-    } catch (error) {
-        console.error('Error fetching nearby station:', error);
-        updateTrainScheduleWithError('Error fetching nearby station');
-    }
-}
 
 async function updateTrainSchedule(stationId, stationname) {
     const url = `https://v6.bvg.transport.rest/stops/${stationId}/departures?duration=30`;

@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const { sunrise, sunset } = await getSunriseSunsetTimes(latitude, longitude);
             updateWeather(latitude, longitude, timezone, sunrise, sunset);
-            console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Timezone: ${timezone}`);
         },
         async (error) => {
             console.error('Error getting location:', error);
