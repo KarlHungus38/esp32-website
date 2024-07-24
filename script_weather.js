@@ -85,7 +85,7 @@ function processWeatherData(hourlyData, this_timezone, sunrise, sunset) {
         99: 'wi-thunderstorm', // Thunderstorm with heavy hail
     };
 
-    const starting_hour = parseInt(new Date().toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false })) - 6;
+    const starting_hour = parseInt(new Date().toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false })) - 5;
     console.log("i changed starting hour in line 88 to see more daytime")
 
     const hoursToShow = [starting_hour, starting_hour + 1, starting_hour + 2, starting_hour + 3, starting_hour + 5, starting_hour + 8]; // Indices of the hours to show
