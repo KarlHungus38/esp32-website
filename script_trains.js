@@ -23,14 +23,14 @@ async function updateTrainSchedule(stationId, stationname) {
         trainsElement.innerHTML = ''; // Clear existing timeline
 
         // Create sections
+        const sTrainsSection = document.createElement('div');
+        sTrainsSection.id = 's-trains-section';
+        trainsElement.appendChild(sTrainsSection);
+
         const stationNameSection = document.createElement('div');
         stationNameSection.className = 'station-name';
         stationNameSection.textContent = stationname.split("(")[0];
         trainsElement.appendChild(stationNameSection);
-
-        const sTrainsSection = document.createElement('div');
-        sTrainsSection.id = 's-trains-section';
-        trainsElement.appendChild(sTrainsSection);
 
         const busesSection = document.createElement('div');
         busesSection.id = 'buses-section';
@@ -55,11 +55,11 @@ async function updateTrainSchedule(stationId, stationname) {
 
                 const destinationSpan = document.createElement('span');
                 destinationSpan.className = isSTrain ? 'train-destination' : 'bus-destination';
-                destinationSpan.textContent = `${departure.line.name} to ${departure.destination.name.split("(")[0]}`;
+                destinationSpan.textContent = `${departure.line.name} nach ${departure.destination.name.split("(")[0].replace("S ", "")}`;
 
                 const statusSpan = document.createElement('span');
                 statusSpan.className = isSTrain ? 'train-status' : 'bus-status';
-                statusSpan.textContent = delay > 0 ? `${delay} min delay` : 'On time';
+                statusSpan.textContent = delay > 0 ? `+ ${delay} min` : 'On time';
 
                 entry.appendChild(timeSpan);
                 entry.appendChild(destinationSpan);

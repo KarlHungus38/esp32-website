@@ -66,7 +66,7 @@ function processWeatherData(hourlyData, this_timezone, sunrise, sunset) {
         55: 'wi-showers', // Drizzle: Dense intensity
         56: 'wi-sleet', // Freezing Drizzle: Light
         57: 'wi-sleet', // Freezing Drizzle: Dense intensity
-        61: 'wi-rain', // Rain: Slight
+        61: 'wi-sprinkle', // Rain: Slight
         63: 'wi-rain', // Rain: Moderate
         65: 'wi-rain', // Rain: Heavy intensity
         66: 'wi-rain-mix', // Freezing Rain: Light
@@ -85,8 +85,8 @@ function processWeatherData(hourlyData, this_timezone, sunrise, sunset) {
         99: 'wi-thunderstorm', // Thunderstorm with heavy hail
     };
 
-    const starting_hour = parseInt(new Date().toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false })) - 6;
-    console.log("i changed starting hour in line 88 to see more daytime")
+    const starting_hour = parseInt(new Date().toLocaleString('en-US', { timeZone: `${this_timezone}`, hour: 'numeric', hour12: false }));
+    // console.log("i changed starting hour in line 88 to see more daytime")
 
     const hoursToShow = [starting_hour, starting_hour + 1, starting_hour + 2, starting_hour + 3, starting_hour + 5, starting_hour + 8]; // Indices of the hours to show
     const weatherData = hoursToShow.map(index => {
