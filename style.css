@@ -310,10 +310,11 @@ body {
 }
 
 .weatherday {
-    background-color: #87CEEB;
+    background-color: #c9ecfa;
 }
 
 #day-sunny {
+    background-color: #87CEEB;
     background-image: 
         url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="00" r="15" fill="yellow"/><circle cx="50" cy="00" r="30" fill="yellow" opacity="0.3"/></svg>');
     background-size: 200px 200px;
@@ -324,6 +325,7 @@ body {
 
 
 #day-cloudy {
+    background-color: #87CEEB;
     background-image: 
         url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 53 53"> <ellipse opacity="0.5" fill="white" cx="11.612771" cy="8.384511" rx="19.593748" ry="10.536685" /> <ellipse opacity="0.5" fill="white" cx="62.819294" cy="7.9383945" rx="19.593748" ry="10.536685" /> <ellipse opacity="0.5" fill="white" cx="13.989132" cy="46.697689" rx="19.593748" ry="10.536685" /> <ellipse opacity="0.5" fill="white" cx="7.4429345" cy="21.073368" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="44.766773" cy="21.0518" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="38.679508" cy="24.032022" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="28.660883" cy="17.817938" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="35.241848" cy="22.418478" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="42.388939" cy="28.327984" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="43.932056" cy="54.01812" rx="14.841032" ry="3.6317933" /> <ellipse opacity="0.5" fill="white" cx="-0.29144007" cy="32.282608" rx="3.990489" ry="7.039402" /> <ellipse opacity="0.5" fill="white" cx="47.796196" cy="41.51902" rx="3.990489" ry="7.039402" /> <ellipse opacity="0.5" fill="white" cx="36.732674" cy="-4.0913725" rx="17.038042" ry="6.5013585" /> <ellipse opacity="0.5" fill="white" cx="28.381792" cy="3.7214665" rx="24.794836" ry="2.1073368" /> <ellipse opacity="0.5" fill="white" cx="26.902174" cy="4.4836955" rx="24.794836" ry="2.1073368" /> <ellipse opacity="0.5" fill="white" cx="25.826084" cy="22.6875" rx="24.794836" ry="2.1073368" /> <ellipse opacity="0.5" fill="white" cx="55.09956" cy="41.352257" rx="10.222825" ry="9.9112206" /> <ellipse opacity="0.5" fill="white" cx="30.847824" cy="47.885872" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="16.858696" cy="47.168476" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="17.665762" cy="46.182068" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="23.046194" cy="45.554344" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="19.27989" cy="22.328806" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="15.513588" cy="43.3125" rx="14.078804" ry="4.9320655" /> <ellipse opacity="0.5" fill="white" cx="33.717392" cy="44.747284" rx="14.078804" ry="4.9320655" /> </svg>'),
         url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="00" r="15" fill="yellow"/><circle cx="50" cy="00" r="30" fill="yellow" opacity="0.3"/></svg>');
@@ -399,6 +401,7 @@ body {
     background-position: top top, center center;
     background-repeat: repeat, repeat;
     animation: moveRain 5s linear infinite, lightning 5s infinite;
+    color: #505050
 }
 
 
