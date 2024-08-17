@@ -15,8 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
 async function updateTrainSchedule(stationId, stationname) {
     const url = `https://v5.db.transport.rest/stops/${stationId}/departures?duration=30`;
 
-    console.log(url);
-
     try {
         const response = await fetch(url);
         const data = await response.json();
@@ -37,8 +35,6 @@ async function updateTrainSchedule(stationId, stationname) {
         const busesSection = document.createElement('div');
         busesSection.id = 'buses-section';
         trainsElement.appendChild(busesSection);
-
-        console.log(data);
 
         if (data.length > 0) {
             data.forEach(departure => {
