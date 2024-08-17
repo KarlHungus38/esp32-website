@@ -13,7 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function updateTrainSchedule(stationId, stationname) {
-    const url = `https://v6.bvg.transport.rest/stops/${stationId}/departures?duration=30`;
+    const url = `https://v5.db.transport.rest/stops/${stationId}/departures?duration=30`;
+
+    console.log(url);
 
     try {
         const response = await fetch(url);
@@ -36,8 +38,10 @@ async function updateTrainSchedule(stationId, stationname) {
         busesSection.id = 'buses-section';
         trainsElement.appendChild(busesSection);
 
-        if (data.departures && data.departures.length > 0) {
-            data.departures.forEach(departure => {
+        console.log(data);
+
+        if (data.length > 0) {
+            data.forEach(departure => {
                 const actualTime = new Date(departure.when);
                 const plannedTime = new Date(departure.plannedWhen);
                 const delay = (actualTime - plannedTime) / 60000; // delay in minutes

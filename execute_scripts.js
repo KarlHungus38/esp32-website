@@ -7,7 +7,7 @@ function getQueryParam(param) {
 
 // Function to get location data from the API
 async function getLocationData(query) {
-    const apiUrl = `https://v6.bvg.transport.rest/locations?query=${query}&fuzzy=true&results=1&stops=true&addresses=true&poi=true&linesOfStops=false&language=de`;
+    const apiUrl = `https://v5.db.transport.rest/locations?query=${query}&fuzzy=true&results=1&stops=true&addresses=true&poi=true&linesOfStops=false&language=de`;
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
@@ -22,7 +22,7 @@ async function getLocationData(query) {
 export async function getCurrentLocation(successCallback, errorCallback) {
     // Extract 'location' query parameter from URL
     const locationQuery = getQueryParam('station');
-    
+
     if (locationQuery) {
         try {
             const locationData = await getLocationData(locationQuery);
