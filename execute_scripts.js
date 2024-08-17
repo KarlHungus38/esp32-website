@@ -1,3 +1,7 @@
+// Importing functions from other scripts
+import { updateTrainSchedule } from './script_trains.js';
+import { updateWeather } from './script_weather.js';
+
 // Function to extract query parameter from the URL
 function getQueryParam(param) {
     const url = new URL(window.location.href);
@@ -20,7 +24,6 @@ async function getLocationData(query) {
 
 // Function to get current location
 export async function getCurrentLocation(successCallback, errorCallback) {
-    // Extract 'location' query parameter from URL
     const locationQuery = getQueryParam('station');
 
     if (locationQuery) {
@@ -39,3 +42,16 @@ export async function getCurrentLocation(successCallback, errorCallback) {
         errorCallback(new Error('No location query parameter found in the URL.'));
     }
 }
+
+// Execute functions from the imported scripts when the DOM content is loaded
+document.addEventListener("DOMContentLoaded", () => {
+    getCurrentLocation(
+        (latitude, longitude, stationId, stationName) => {
+            updateTrainSchedule(stationId, stationName);
+            updateWeather(latitude, longitude);
+        },
+        (error) => {
+            console.error('Error getting location:', error);
+        }
+    );
+});

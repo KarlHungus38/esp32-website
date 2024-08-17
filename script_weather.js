@@ -1,20 +1,25 @@
-import { getCurrentLocation } from './execute_scripts.js';
+export async function updateWeather(latitude, longitude) {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const { sunrise, sunset } = await getSunriseSunsetTimes(latitude, longitude);
+    const apiEndpoint = 'https://api.open-meteo.com/v1/forecast';
+    const params = {
+        latitude,
+        longitude,
+        hourly: 'temperature_2m,weathercode',
+        start: new Date().toISOString().split('T')[0],
+        timezone
+    };
 
-document.addEventListener("DOMContentLoaded", () => {
-    getCurrentLocation(
-        async (latitude, longitude) => {
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const { sunrise, sunset } = await getSunriseSunsetTimes(latitude, longitude);
-            updateWeather(latitude, longitude, timezone, sunrise, sunset);
-        },
-        async (error) => {
-            console.error('Error getting location:', error);
-            // Fallback to Berlin's coordinates and timezone if location is not available
-            const fallbackSunTimes = await getSunriseSunsetTimes(52.437, 13.721);
-            updateWeather(52.437, 13.721, 'Europe/Berlin', fallbackSunTimes.sunrise, fallbackSunTimes.sunset);
-        }
-    );
-});
+    const url = `${apiEndpoint}?latitude=${params.latitude}&longitude=${params.longitude}&hourly=${params.hourly}&start=${params.start}&timezone=${params.timezone}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const weatherData = processWeatherData(data.hourly, timezone, sunrise, sunset);
+        createWeatherElements(weatherData);
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+    }
+}
 
 async function getSunriseSunsetTimes(latitude, longitude) {
     const apiEndpoint = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`;
@@ -28,27 +33,6 @@ async function getSunriseSunsetTimes(latitude, longitude) {
     } catch (error) {
         console.error('Error fetching sunrise and sunset times:', error);
         return { sunrise: null, sunset: null };
-    }
-}
-
-async function updateWeather(latitude, longitude, timezone, sunrise, sunset) {
-    const apiEndpoint = 'https://api.open-meteo.com/v1/forecast';
-    const params = {
-        latitude,
-        longitude,
-        hourly: 'temperature_2m,weathercode',
-        start: new Date().toISOString().split('T')[0], // current date in ISO format
-        timezone
-    };
-
-    const url = `${apiEndpoint}?latitude=${params.latitude}&longitude=${params.longitude}&hourly=${params.hourly}&start=${params.start}&timezone=${params.timezone}`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const weatherData = processWeatherData(data.hourly, params.timezone, sunrise, sunset);
-        createWeatherElements(weatherData);
-    } catch (error) {
-        console.error('Error fetching weather data:', error);
     }
 }
 

@@ -1,18 +1,4 @@
-import { getCurrentLocation } from './execute_scripts.js';
-
-document.addEventListener("DOMContentLoaded", () => {
-    getCurrentLocation(
-        (latitude, longitude, stationid, stationName) => {
-            updateTrainSchedule(stationid, stationName); // Or use findNearbyStation(latitude, longitude); once implemented
-        },
-        (error) => {
-            console.error('Error getting location:', error);
-            updateTrainScheduleWithError('Error getting location');
-        }
-    );
-});
-
-async function updateTrainSchedule(stationId, stationname) {
+export async function updateTrainSchedule(stationId, stationName) {
     const url = `https://v5.db.transport.rest/stops/${stationId}/departures?duration=30`;
 
     try {
@@ -29,7 +15,7 @@ async function updateTrainSchedule(stationId, stationname) {
 
         const stationNameSection = document.createElement('div');
         stationNameSection.className = 'station-name';
-        stationNameSection.textContent = stationname.split("(")[0];
+        stationNameSection.textContent = stationName.split("(")[0];
         trainsElement.appendChild(stationNameSection);
 
         const busesSection = document.createElement('div');
