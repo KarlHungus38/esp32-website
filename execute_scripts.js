@@ -43,11 +43,32 @@ export async function getCurrentLocation(successCallback, errorCallback) {
     }
 }
 
-// Function to download a screenshot
+// Function to download a screenshot of a specific area
 function downloadScreenshot() {
-    html2canvas(document.body).then(canvas => {
+    const targetWidth = 1000;
+    const targetHeight = 660;
+
+    html2canvas(document.body, {
+        // Capture the entire webpage, but we will crop it later
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight
+    }).then(canvas => {
+        const croppedCanvas = document.createElement('canvas');
+        const context = croppedCanvas.getContext('2d');
+
+        // Set the size of the new canvas
+        croppedCanvas.width = targetWidth;
+        croppedCanvas.height = targetHeight;
+
+        // Calculate the x position for cropping (centered horizontally)
+        const startX = (canvas.width - targetWidth) / 2;
+
+        // Draw the cropped area on the new canvas
+        context.drawImage(canvas, startX, 0, targetWidth, targetHeight, 0, 0, targetWidth, targetHeight);
+
+        // Create the download link
         const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
+        link.href = croppedCanvas.toDataURL('image/png');
         link.download = 'screenshot.png';
         link.click();
     });
