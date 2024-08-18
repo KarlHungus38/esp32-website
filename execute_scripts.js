@@ -68,8 +68,8 @@ function downloadScreenshot() {
 
         // Create the download link
         const link = document.createElement('a');
-        link.href = croppedCanvas.toDataURL('image/png');
-        link.download = 'screenshot.png';
+        link.href = croppedCanvas.toDataURL('image/jpg');
+        link.download = 'screenshot.jpg';
         link.click();
     });
 }
