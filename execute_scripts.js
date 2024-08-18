@@ -43,12 +43,34 @@ export async function getCurrentLocation(successCallback, errorCallback) {
     }
 }
 
+// Function to download a screenshot
+function downloadScreenshot() {
+    html2canvas(document.body).then(canvas => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'screenshot.png';
+        link.click();
+    });
+}
+
 // Execute functions from the imported scripts when the DOM content is loaded
 document.addEventListener("DOMContentLoaded", () => {
     getCurrentLocation(
-        (latitude, longitude, stationId, stationName) => {
-            updateTrainSchedule(stationId, stationName);
-            updateWeather(latitude, longitude);
+        async (latitude, longitude, stationId, stationName) => {
+            try {
+                // Wait for both updateTrainSchedule and updateWeather to finish
+                await Promise.all([
+                    updateTrainSchedule(stationId, stationName),
+                    updateWeather(latitude, longitude)
+                ]);
+
+                // Check if download=true is in the URL and trigger screenshot download if true
+                if (getQueryParam('download') === 'true') {
+                    downloadScreenshot();
+                }
+            } catch (error) {
+                console.error('Error executing updates:', error);
+            }
         },
         (error) => {
             console.error('Error getting location:', error);

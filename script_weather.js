@@ -19,6 +19,7 @@ export async function updateWeather(latitude, longitude) {
     } catch (error) {
         console.error('Error fetching weather data:', error);
     }
+    return Promise.resolve();
 }
 
 async function getSunriseSunsetTimes(latitude, longitude) {

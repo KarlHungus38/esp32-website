@@ -13,9 +13,19 @@ export async function updateTrainSchedule(stationId, stationName) {
         sTrainsSection.id = 's-trains-section';
         trainsElement.appendChild(sTrainsSection);
 
+        // const stationNameSection = document.createElement('div');
+        // stationNameSection.className = 'station-name';
+        // stationNameSection.textContent = stationName.split("(")[0];
+        // trainsElement.appendChild(stationNameSection);
+
         const stationNameSection = document.createElement('div');
         stationNameSection.className = 'station-name';
-        stationNameSection.textContent = stationName.split("(")[0];
+        stationNameSection.innerHTML = '';
+        stationName.split("(")[0].split('').forEach(letter => {
+            const span = document.createElement('span');
+            span.textContent = letter;
+            stationNameSection.appendChild(span);
+        });
         trainsElement.appendChild(stationNameSection);
 
         const busesSection = document.createElement('div');
@@ -60,6 +70,7 @@ export async function updateTrainSchedule(stationId, stationName) {
         console.error('Error fetching train data:', error);
         trainsElement.innerHTML = '<div>Error fetching train data</div>';
     }
+    return Promise.resolve();
 }
 
 
